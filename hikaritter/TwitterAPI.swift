@@ -57,7 +57,7 @@ class TwitterAPI {
         let endpoint = api.baseURL + api.version + path
         // エラー設定
         var clientError: NSError?
-        var params: NSDictionary?
+        var params: [NSObject : AnyObject]?
         
         // パラメータ設定
         switch direction {
@@ -97,7 +97,7 @@ class TwitterAPI {
                     
                     if let jsonArray = json as? NSArray {
                         // JSONObject を TWTRTweet に変換
-                        let tmp = TWTRTweet.tweetsWithJSONArray(jsonArray) as [TWTRTweet]
+                        let tmp = TWTRTweet.tweetsWithJSONArray(jsonArray as [AnyObject]) as! [TWTRTweet]
                         // down のときと up のときで更新するIDがことなるんだよなぁ
                         if !tmp.isEmpty {
                             // ID の保持

@@ -44,7 +44,8 @@ class MainTabBarController: UITabBarController {
         //profileview.tabBarItem   = UITabBarItem(title: "アカウント", image: UIImage(named: "account"), tag: 2)
         
         // タブで表示するViewControllerを配列に格納
-        let myTabs = NSArray(objects: homeTLNC!, mentionTLNC!/*, profileNC!*/)
+        let myTabs : [AnyObject] = [homeTLNC!, mentionTLNC!]
+        /*, profileNC!*/
         
         // 配列をTabにセット
         self.setViewControllers(myTabs, animated: false)

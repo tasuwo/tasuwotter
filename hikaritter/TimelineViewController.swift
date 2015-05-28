@@ -90,7 +90,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
      */
     func loadTweets() {
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.INIT, {
+        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.INIT, tweets: {
             twttrs in
             for tweet in twttrs {
                 self.tweets.append(tweet)
@@ -109,7 +109,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
         var tmp: [TWTRTweet] = []
         
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.UP, {
+        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.UP, tweets: {
             twttrs in
             if !twttrs.isEmpty {
                 for tweet in twttrs {
@@ -152,7 +152,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     func bottomPullToRefreshTriggered(manager: MNMBottomPullToRefreshManager!) {
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.DOWN, {
+        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.DOWN, tweets: {
             twttrs in
             for tweet in twttrs {
                 self.tweets.append(tweet)
@@ -177,7 +177,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // セルのためのテーブルビュー情報を，プレースホルダ識別子によって指定している
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as TWTRTweetTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("cell") as! TWTRTweetTableViewCell
         // for TWTRTweetViewDelegate to handling on select
         cell.tweetView.delegate = self
         // ツイート格納
