@@ -47,33 +47,22 @@ class TwitterAPI {
         let api = self.sharedInstance
         var path = "/statuses/"
         switch mode {
-        case api.HOME:
-            path += "home_timeline.json"
-        case api.MENTION:
-            path += "mentions_timeline.json"
-        default:
-            println("Error: api error")
+        case api.HOME:      path += "home_timeline.json"
+        case api.MENTION:   path += "mentions_timeline.json"
+        default:            println("Error: api error")
         }
         let endpoint = api.baseURL + api.version + path
+        
         // エラー設定
         var clientError: NSError?
         var params: [NSObject : AnyObject]?
         
         // パラメータ設定
         switch direction {
-        case api.INIT:
-            // 初期の読み込み
-            params = nil
-        case api.UP:
-            // 上部更新
-            params = ["since_id": api.since_id]
-            println("up")
-        case api.DOWN:
-            // 下部更新
-            params = ["max_id": api.max_id]
-            println("down")
-        default:
-            println("Error: param diff")
+        case api.INIT:  params = nil                        // 初期の読み込み
+        case api.UP:    params = ["since_id": api.since_id] // 上部更新
+        case api.DOWN:  params = ["max_id": api.max_id]     // 下部更新
+        default:        println("Error: param diff")
         }
         
         // NSURLRequest を生成
@@ -84,55 +73,59 @@ class TwitterAPI {
             error: &clientError
         )
         
-        if request != nil {
-            // リクエスト発行
-            Twitter.sharedInstance().APIClient.sendTwitterRequest(request, completion: {
-                response, data, connectionErr in
-                if connectionErr == nil {
-                    var jsonError: NSError?
-                    // NSData を JSONObject に変換
-                    let json: AnyObject? =  NSJSONSerialization.JSONObjectWithData(data,
-                        options: nil,
-                        error: &jsonError)
-                    
-                    if let jsonArray = json as? NSArray {
-                        // JSONObject を TWTRTweet に変換
-                        let tmp = TWTRTweet.tweetsWithJSONArray(jsonArray as [AnyObject]) as! [TWTRTweet]
-                        // down のときと up のときで更新するIDがことなるんだよなぁ
-                        if !tmp.isEmpty {
-                            // ID の保持
-                            switch direction {
-                            case api.INIT:
-                                api.since_id = tmp[0].tweetID
-                                api.max_id = tmp[tmp.count - 1].tweetID
-                                let num = api.max_id.toInt()! - 1
-                                api.max_id = num.description
-                                break
-                            case api.UP:
-                                api.since_id = tmp[0].tweetID
-                                break
-                            case api.DOWN:
-                                api.max_id = tmp[tmp.count - 1].tweetID
-                                let num = api.max_id.toInt()! - 1
-                                api.max_id = num.description
-                                break
-                            default:
-                                break
-                            }
-                            // 引数に渡す
-                            tweets(tmp)
-                        } else {
-                            // 更新情報が空の場合は，IDを更新しない
-                            tweets([])
-                        }
-                    }
-                } else {
-                    println("Error: \(connectionErr)")
-                }
-            })
-        } else {
+        if request == nil {
             println("Error: \(clientError)")
+            return
         }
+        
+        // リクエスト発行
+        Twitter.sharedInstance().APIClient.sendTwitterRequest(request, completion: {
+            response, data, connectionErr in
+            
+            if connectionErr != nil {
+                println("Error: \(connectionErr)")
+                return
+            }
+            
+            var jsonError: NSError?
+            // 取得した NSData を JSONObject に変換
+            let json: AnyObject? =
+                NSJSONSerialization.JSONObjectWithData(
+                    data,
+                    options: nil,
+                    error: &jsonError)
+            
+            if let jsonArray = json as? NSArray {
+                // JSONObject を TWTRTweet に変換
+                let tweetArray = TWTRTweet.tweetsWithJSONArray(jsonArray as [AnyObject]) as! [TWTRTweet]
+                    
+                if tweetArray.isEmpty {
+                    // 更新情報が空の場合は，IDを更新しない
+                    tweets([])
+                    return
+                }
+                    
+                // ID の保持
+                switch direction {
+                case api.INIT:
+                    api.since_id = tweetArray[0].tweetID
+                    api.max_id = tweetArray[tweetArray.count - 1].tweetID
+                    let num = api.max_id.toInt()! - 1
+                    api.max_id = num.description
+                case api.UP:
+                    api.since_id = tweetArray[0].tweetID
+                case api.DOWN:
+                    api.max_id = tweetArray[tweetArray.count - 1].tweetID
+                    let num = api.max_id.toInt()! - 1
+                    api.max_id = num.description
+                default:
+                    break
+                }
+                
+                // 引数に渡す
+                tweets(tweetArray)
+            }
+        })
     }
     
     
