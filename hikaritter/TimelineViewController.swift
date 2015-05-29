@@ -144,7 +144,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     
     
     // MARK: MNMBottomPullToRefreshManagerClient
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         self.refreshFooter.tableViewScrolled()
     }
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
