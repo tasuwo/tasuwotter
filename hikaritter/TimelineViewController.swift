@@ -1,11 +1,3 @@
-//
-//  TimelineViewController.swift
-//  hikaritter
-//
-//  Created by 兎澤佑 on 2015/04/03.
-//  Copyright (c) 2015年 兎澤 佑. All rights reserved.
-//
-
 import UIKit
 import TwitterKit
 
@@ -13,7 +5,8 @@ import TwitterKit
 /**
  * タイムライン表示画面
  */
-class TimelineViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MNMBottomPullToRefreshManagerClient,  TWTRTweetViewDelegate {
+class TimelineViewController: UIViewController, UITableViewDataSource, UITableViewDelegate,
+                                    MNMBottomPullToRefreshManagerClient,  TWTRTweetViewDelegate {
     let api = TwitterAPI.sharedInstance
     var tableView: UITableView!
     var tweets: [TWTRTweet] = [] {
@@ -30,10 +23,10 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     var refreshFooter: MNMBottomPullToRefreshManager!
     
     var VCtitle: String?
-    var VCmode: Int?
+    var VCmode: timelineKind?
     
     
-    init(title:String, mode:Int) {
+    init(title:String, mode:timelineKind) {
         super.init(nibName: nil, bundle: nil)
         self.VCtitle = title
         self.VCmode = mode
@@ -90,7 +83,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
      */
     func loadTweets() {
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.INIT, tweets: {
+        TwitterAPI.getTimeline(self.VCmode!, direction: updateMode.INIT, tweets: {
             twttrs in
             for tweet in twttrs {
                 self.tweets.append(tweet)
@@ -109,7 +102,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
         var tmp: [TWTRTweet] = []
         
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.UP, tweets: {
+        TwitterAPI.getTimeline(self.VCmode!, direction: updateMode.UP, tweets: {
             twttrs in
             if !twttrs.isEmpty {
                 for tweet in twttrs {
@@ -152,7 +145,7 @@ class TimelineViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     func bottomPullToRefreshTriggered(manager: MNMBottomPullToRefreshManager!) {
         // 読み込み
-        TwitterAPI.getTimeline(self.VCmode!, direction: self.api.DOWN, tweets: {
+        TwitterAPI.getTimeline(self.VCmode!, direction: updateMode.DOWN, tweets: {
             twttrs in
             for tweet in twttrs {
                 self.tweets.append(tweet)

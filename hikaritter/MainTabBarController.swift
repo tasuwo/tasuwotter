@@ -29,8 +29,8 @@ class MainTabBarController: UITabBarController {
         super.viewDidLoad()
         
         // viewController 用意
-        homeTLview    = TimelineViewController(title: "ホーム", mode: api.HOME)
-        mentionTLview = TimelineViewController(title: "通知", mode: api.MENTION)
+        homeTLview    = TimelineViewController(title: "ホーム", mode: timelineKind.HOME)
+        mentionTLview = TimelineViewController(title: "通知", mode: timelineKind.MENTION)
         //profileview   = ProfileViewController()
         
         // ナビゲーションバー用意

@@ -1,11 +1,3 @@
-//
-//  SingleTweetViewController.swift
-//  hikaritter
-//
-//  Created by 兎澤佑 on 2015/04/12.
-//  Copyright (c) 2015年 兎澤 佑. All rights reserved.
-//
-
 import UIKit
 import TwitterKit
 
